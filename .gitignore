@@ -1,1 +1,12 @@
-checker/
+# Python
+__pycache__/
+*.pyc
+venv/
+db.sqlite3
+.env
+
+# Node
+node_modules/
+build/
+.DS_Store
+coverage/
