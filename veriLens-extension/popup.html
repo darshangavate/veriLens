@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>veriLens</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="hdr">
+    <img src="icons/icon48.png" alt="veriLens" />
+    <h1>veriLens</h1>
+  </header>
+
+  <main>
+    <!-- SCORE CARD -->
+    <section id="score-card" class="card" hidden>
+      <div class="score-wrap">
+        <div class="score-ring">
+          <span id="score-val">—</span>
+        </div>
+        <div class="score-meta">
+          <div id="score-label" class="score-label">Credibility</div>
+          <div id="type-badge" class="type-badge">—</div>
+        </div>
+      </div>
+
+      <div id="reason" class="reason"></div>
+
+      <details id="details" class="details" hidden>
+        <summary>Show explanation</summary>
+        <pre id="explanation"></pre>
+      </details>
+
+      <div id="post-meta" class="post-meta"></div>
+    </section>
+
+    <!-- EMPTY STATE -->
+    <section id="empty" class="empty">
+      <p>Hover any post and click <b>Analyze</b> to see results here.</p>
+    </section>
+
+    <!-- ACTIONS -->
+    <button id="analyze-page" class="btn-primary">🔍 Analyze visible posts</button>
+  </main>
+  <footer class="ftr">
+    <span>Tip: you control costs — only analyze what you need.</span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

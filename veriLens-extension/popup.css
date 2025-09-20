@@ -1,0 +1,79 @@
+:root{
+  --bg:#0b0f19;
+  --card:#101726;
+  --muted:#9aa4b2;
+  --text:#e6edf3;
+  --ring:#1f2937;
+  --primary:#22d3ee;     /* cyan */
+  --green:#10b981;
+  --yellow:#f59e0b;
+  --red:#ef4444;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  width:320px; min-height:260px;
+  background:var(--bg); color:var(--text);
+  font:13px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+  padding:12px;
+}
+
+.hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.hdr img{width:20px;height:20px}
+.hdr h1{margin:0;font-size:14px;letter-spacing:.2px;font-weight:700}
+
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+  border:1px solid #182235; border-radius:14px; padding:12px; margin-bottom:10px;
+  box-shadow:0 8px 30px rgba(0,0,0,.25)
+}
+
+.score-wrap{display:flex;align-items:center;gap:12px}
+.score-ring{
+  width:72px;height:72px;border-radius:999px;
+  display:grid;place-items:center;
+  background:conic-gradient(var(--ring) 0deg, var(--ring) 360deg);
+  position:relative;
+}
+.score-ring::after{
+  content:""; position:absolute; inset:6px; border-radius:999px; background:var(--card);
+}
+#score-val{
+  position:relative; font-size:22px; font-weight:800; letter-spacing:.3px;
+}
+
+.score-meta{display:flex;flex-direction:column;gap:4px}
+.score-label{font-size:12px;color:var(--muted)}
+.type-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 8px;border-radius:999px; font-weight:600; font-size:12px;
+  background:#111827;border:1px solid #1f2937;color:#cbd5e1;
+}
+
+.reason{margin-top:8px;color:#c8d2df}
+.details{margin-top:8px}
+.details summary{cursor:pointer;color:#9bd5ff}
+.details pre{white-space:pre-wrap;max-height:140px;overflow:auto;background:#0a1220;border:1px dashed #23324a;border-radius:8px;padding:8px;color:#cbd5e1}
+
+.post-meta{margin-top:8px;color:var(--muted);font-size:12px}
+
+.empty{
+  text-align:center; color:#a7b1bf; background:rgba(255,255,255,0.02);
+  border:1px dashed #223152; border-radius:12px; padding:14px; margin-bottom:10px;
+}
+
+.btn-primary{
+  width:100%; padding:10px 12px; border:none; border-radius:10px;
+  background:linear-gradient(180deg,#1fbad6,#0ea5b1);
+  color:#03222a; font-weight:800; letter-spacing:.3px; cursor:pointer;
+  box-shadow:0 6px 20px rgba(34,211,238,.25);
+}
+.btn-primary:hover{filter:saturate(1.1)}
+
+.ftr{margin-top:10px;color:#7f8a99;font-size:11px}
+
+/* dynamic score ring colors */
+.ring-green{ background:conic-gradient(var(--green) var(--deg), var(--ring) 0) }
+.ring-yellow{ background:conic-gradient(var(--yellow) var(--deg), var(--ring) 0) }
+.ring-red{ background:conic-gradient(var(--red) var(--deg), var(--ring) 0) }

@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "veriLens Fact Checker",
+  "version": "1.0",
+  "description": "Check credibility of social media posts on hover",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": [
+    "http://127.0.0.1:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.instagram.com/*",
+        "https://instagram.com/*",
+        "https://*.x.com/*",
+        "https://x.com/*",
+        "https://*.facebook.com/*",
+        "https://facebook.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

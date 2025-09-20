@@ -1,0 +1,48 @@
+# === Backend (Python) ===
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+*.log
+
+# Django/Flask specific
+instance/
+*.db
+*.sqlite3-journal
+
+# === Frontend (React/Vite/Tailwind) ===
+factchecker-ui/node_modules/
+factchecker-ui/build/
+factchecker-ui/dist/
+factchecker-ui/.env
+factchecker-ui/.env.local
+factchecker-ui/.env.*.local
+
+# === General Node.js ===
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Environment files ===
+.env
+.env.local
+.env.*.local
+
+# === Coverage / Testing ===
+coverage/
+**/coverage/
+
+# === OS / Editor ===
+.DS_Store
+.vscode/
+.idea/
+
+# === Optional ===
+*.bak
+*.swp
