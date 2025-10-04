@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/verilens/static/css/main.560fbff3.css",
+    "main.js": "/verilens/static/js/main.8bd88c2e.js",
+    "static/js/453.d4dafbf6.chunk.js": "/verilens/static/js/453.d4dafbf6.chunk.js",
+    "index.html": "/verilens/index.html",
+    "main.560fbff3.css.map": "/verilens/static/css/main.560fbff3.css.map",
+    "main.8bd88c2e.js.map": "/verilens/static/js/main.8bd88c2e.js.map",
+    "453.d4dafbf6.chunk.js.map": "/verilens/static/js/453.d4dafbf6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.560fbff3.css",
+    "static/js/main.8bd88c2e.js"
+  ]
+}
