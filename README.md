@@ -1,4 +1,4 @@
-## 🚀 Quick Start
+## 🚀 Quick Start #
 
 1. Install Node.js (>= 16) and Python (>= 3.10).
 2. From the project root:
