@@ -1,0 +1,24 @@
+{
+  "name": "verilens-root",
+  "private": true,
+  "scripts": {
+    "setup": "npm run setup:backend && npm run setup:frontend",
+
+    "setup:backend:win": "python -m venv factchecker\\venv && call factchecker\\venv\\Scripts\\python -m pip install -r factchecker\\requirements.txt",
+    "setup:backend:nix": "python3 -m venv factchecker/venv && factchecker/venv/bin/python -m pip install -r factchecker/requirements.txt",
+    "setup:backend": "npm run setup:backend:win || npm run setup:backend:nix",
+
+    "setup:frontend": "cd factchecker-ui && npm install",
+
+    "dev": "npm-run-all -p dev:backend dev:frontend",
+
+    "dev:backend:win": "factchecker\\venv\\Scripts\\python factchecker\\manage.py runserver 0.0.0.0:8000",
+    "dev:backend:nix": "factchecker/venv/bin/python factchecker/manage.py runserver 0.0.0.0:8000",
+    "dev:backend": "npm run dev:backend:win || npm run dev:backend:nix",
+
+    "dev:frontend": "cd factchecker-ui && npm start"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}

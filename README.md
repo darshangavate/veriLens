@@ -1,29 +1,9 @@
-# 📰 Project-PBL FactChecker
+## 🚀 Quick Start
 
-A fact-checking application with a **Django backend** and a **React + Tailwind frontend**.
+1. Install Node.js (>= 16) and Python (>= 3.10).
+2. From the project root:
 
----
-
-## 🚀 Backend (Django)
-
-### Setup
 ```bash
-cd checker
-python -m venv venv
-# Activate virtual environment
-venv\Scripts\activate
-
-pip install -r requirements.txt
-
-python manage.py migrate
-python manage.py runserver
-```
-## 🎨 Frontend(React)
-
-### Setup
-```bash
-
-cd factchecker-ui
-npm install
-
-npm start
+npm install         # installs helper tools (once)
+npm run setup       # sets up backend venv + pip install, and frontend npm install
+npm run dev         # runs Django backend + React frontend together

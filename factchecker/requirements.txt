@@ -7,3 +7,9 @@ idna==3.10
 requests==2.32.5
 sqlparse==0.5.3
 urllib3==2.5.0
+
+# CORS support for API
+django-cors-headers==4.4.0
+
+# OCR for image analysis
+pytesseract==0.3.13

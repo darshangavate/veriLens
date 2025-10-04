@@ -1,20 +1,18 @@
 # === Python / Backend ===
-venv/
-.env
-.env.local
-__pycache__/
+factchecker/venv/
+factchecker/__pycache__/
+**/__pycache__/
 *.py[cod]
-*.sqlite3
-db.sqlite3
-*.log
-*.pot
-*.pyc
 *.pyo
 *.pyd
+*.pot
+*.log
+*.sqlite3
 *.sqlite3-journal
+db.sqlite3
 instance/
 
-# Django/Flask specific
+# Django specific
 *.db
 media/
 staticfiles/
@@ -43,11 +41,11 @@ jest-results.json
 
 # === OS / Editor ===
 .DS_Store
+Thumbs.db
 .vscode/
 .idea/
 *.swp
 *.bak
-Thumbs.db
 
 # === Optional ===
 *.iml
@@ -58,3 +56,7 @@ Thumbs.db
 # === Logs ===
 logs/
 *.log
+
+# === Chrome Extension build artifacts ===
+veriLens-extension/*.zip
+veriLens-extension/dist/
