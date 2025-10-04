@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/veriLens/static/css/main.560fbff3.css",
-    "main.js": "/veriLens/static/js/main.e639a0ad.js",
+    "main.js": "/veriLens/static/js/main.19097ed5.js",
     "static/js/453.d4dafbf6.chunk.js": "/veriLens/static/js/453.d4dafbf6.chunk.js",
     "index.html": "/veriLens/index.html",
     "main.560fbff3.css.map": "/veriLens/static/css/main.560fbff3.css.map",
-    "main.e639a0ad.js.map": "/veriLens/static/js/main.e639a0ad.js.map",
+    "main.19097ed5.js.map": "/veriLens/static/js/main.19097ed5.js.map",
     "453.d4dafbf6.chunk.js.map": "/veriLens/static/js/453.d4dafbf6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.560fbff3.css",
-    "static/js/main.e639a0ad.js"
+    "static/js/main.19097ed5.js"
   ]
 }
