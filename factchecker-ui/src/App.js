@@ -672,10 +672,10 @@ function Features() {
 function ProductPreview() {
   const [tab, setTab] = useState("live"); // 'live' | 'shots'
   const screenshots = [
-    { src: "/screenshots/img1.png", caption: "Enter a claim and click Check" },
-    { src: "/screenshots/img2.png", caption: "Instant credibility score" },
-    { src: "/screenshots/img3.png", caption: "Detailed explanations" },
-    { src: "/screenshots/img4.png", caption: "Handles errors gracefully" },
+    { src: `${process.env.PUBLIC_URL}/screenshots/img1.png`, caption: "Enter a claim and click Check" },
+    { src: `${process.env.PUBLIC_URL}/screenshots/img2.png`, caption: "Instant credibility score" },
+    { src: `${process.env.PUBLIC_URL}/screenshots/img3.png`, caption: "Detailed explanations" },
+    { src: `${process.env.PUBLIC_URL}/screenshots/img4.png`, caption: "Handles errors gracefully" },
   ];
 
   return (
@@ -883,7 +883,7 @@ export default function App() {
         {/* Logo (single click = home, double click = contributors) */}
         <button onClick={handleLogoClick} className="flex items-center gap-2 cursor-pointer">
           <img
-            src="/logoL.png"   // logo with wordmark baked in
+            src={`${process.env.PUBLIC_URL}/logoL.png`}   // logo with wordmark baked in
             alt="VeriLens logo"
             className="h-10 w-auto drop-shadow-[0_0_6px_rgba(34,211,238,0.6)]"
           />
