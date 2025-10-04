@@ -1,0 +1,122 @@
+/* Button shown on each post (user-triggered → saves model quota) */
+.verilens-btn[data-verilens] {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  line-height: 1;
+  background: #2563eb;          /* blue-600 */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 2147483646;           /* just under the tooltip */
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  user-select: none;
+}
+
+.verilens-btn[data-verilens]:hover { background: #1d4ed8; }  /* blue-700 */
+
+/* Tooltip container for results */
+.verilens-tip[data-verilens] {
+  position: absolute;
+  top: 34px;
+  right: 6px;
+  max-width: 320px;
+  background: rgba(17, 24, 39, 0.96);  /* gray-900 */
+  color: #e5e7eb;                       /* gray-200 */
+  border: 1px solid rgba(75, 85, 99, 0.7); /* gray-600 */
+  border-radius: 10px;
+  padding: 8px 10px;
+  z-index: 2147483647;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+  font-size: 12.5px;
+  line-height: 1.35;
+  box-shadow: 0 12px 24px rgba(0,0,0,.35);
+  user-select: text;
+}
+
+.verilens-tip[data-verilens] .vl-body { white-space: normal; }
+
+.verilens-tip[data-verilens] .vl-reason {
+  margin-top: 6px;
+  opacity: .95;
+}
+
+.verilens-tip[data-verilens] .vl-expl {
+  margin-top: 8px;
+  padding: 8px;
+  background: #0b1220;
+  color: #cbd5e1;
+  border: 1px dashed rgba(148,163,184,.35);
+  border-radius: 8px;
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow: auto;
+}
+
+/* Make sure our UI stays clickable above site overlays */
+*[data-verilens] { pointer-events: auto; }
+/* overall card */
+.verilens-tip[data-verilens]{
+  position:absolute; top:34px; right:6px; max-width:420px;
+  background: #0f172a;               /* slate-900 */
+  color:#e6edf3;
+  border:1px solid #1f2a44;          /* slate-800-ish */
+  border-radius:14px;
+  padding:10px 12px;
+  z-index:2147483647;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+  font-size: 13px; line-height: 1.45;
+  box-shadow: 0 16px 40px rgba(0,0,0,.45);
+}
+
+/* subtle left accent to match your screenshot vibe */
+.verilens-tip[data-verilens]::before{
+  content:""; position:absolute; left:-1px; top:10px; bottom:10px; width:3px;
+  border-radius:3px;
+  background: linear-gradient(180deg,#a78bfa,#22d3ee); /* purple → cyan */
+  opacity:.85;
+}
+
+/* header row */
+.vl-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin-bottom:8px;
+}
+.vl-type{opacity:.95}
+
+/* score block: loud but compact */
+.vl-score{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:999px; border:1px solid #24324d;
+  background: #0b1324;
+  font-weight:700; font-size:12px;
+}
+.vl-score .vl-score-label{opacity:.75; font-weight:600}
+.vl-score .vl-score-val{letter-spacing:.2px}
+
+/* score colors */
+.score-green{ color:#10b981; border-color:#124c3d; background:#08221b; }
+.score-yellow{ color:#f59e0b; border-color:#4a3510; background:#231807; }
+.score-red{ color:#ef4444; border-color:#4a1717; background:#230707; }
+.score-none{ color:#93a4b8; }
+
+/* reason text */
+.vl-reason{ margin-top:6px; color:#cbd5e1 }
+
+/* rounded panel for explanation */
+.vl-expl-panel{
+  margin-top:10px;
+  background:#0a1220; border:1px solid #1b2740;
+  border-radius:12px; padding:10px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+.vl-expl{
+  margin:0; white-space:pre-wrap; max-height:220px; overflow:auto;
+  color:#c9d6e5; font-size:12.5px; line-height:1.4;
+}
+
+/* keep our UI interactive above site layers */
+*[data-verilens]{ pointer-events:auto; }

@@ -1,12 +1,62 @@
-# Python
-__pycache__/
-*.pyc
-venv/
+# === Python / Backend ===
+factchecker/venv/
+factchecker/__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pot
+*.log
+*.sqlite3
+*.sqlite3-journal
 db.sqlite3
-.env
+instance/
 
-# Node
+# Django specific
+*.db
+media/
+staticfiles/
+
+# === Frontend (React/Vite/Tailwind) ===
+factchecker-ui/node_modules/
+factchecker-ui/build/
+factchecker-ui/dist/
+factchecker-ui/.env
+factchecker-ui/.env.local
+factchecker-ui/.env.*.local
+
+# === General Node.js ===
 node_modules/
-build/
-.DS_Store
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Coverage / Testing ===
 coverage/
+**/coverage/
+.nyc_output/
+jest-results.json
+
+# === OS / Editor ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# === Optional ===
+*.iml
+*.pid
+*.seed
+*.tgz
+
+# === Logs ===
+logs/
+*.log
+
+# === Chrome Extension build artifacts ===
+veriLens-extension/*.zip
+veriLens-extension/dist/
