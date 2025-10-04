@@ -1,10 +1,10 @@
 :root{
   --bg:#0b0f19;
-  --card:#101726;
+  --card:#0f172a;          /* deeper card */
   --muted:#9aa4b2;
   --text:#e6edf3;
-  --ring:#1f2937;
-  --primary:#22d3ee;     /* cyan */
+  --ringTrack:#1f2937;
+  --primary:#22d3ee;       /* cyan */
   --green:#10b981;
   --yellow:#f59e0b;
   --red:#ef4444;
@@ -14,66 +14,103 @@
 html,body{margin:0;padding:0}
 body{
   width:320px; min-height:260px;
-  background:var(--bg); color:var(--text);
+  background:
+    radial-gradient(600px 300px at 90% -10%, rgba(34,211,238,.14), transparent 50%),
+    radial-gradient(600px 300px at -10% 110%, rgba(59,130,246,.10), transparent 50%),
+    var(--bg);
+  color:var(--text);
   font:13px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
   padding:12px;
 }
 
+/* header */
 .hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.hdr img{width:20px;height:20px}
-.hdr h1{margin:0;font-size:14px;letter-spacing:.2px;font-weight:700}
+.hdr img{width:20px;height:20px;filter:drop-shadow(0 0 6px rgba(34,211,238,.5))}
+.hdr h1{margin:0;font-size:14px;letter-spacing:.2px;font-weight:800}
 
+/* cards */
 .card{
-  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-  border:1px solid #182235; border-radius:14px; padding:12px; margin-bottom:10px;
-  box-shadow:0 8px 30px rgba(0,0,0,.25)
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px; padding:12px; margin-bottom:10px;
+  box-shadow:0 10px 34px rgba(0,0,0,.35);
+  backdrop-filter: blur(6px);
 }
 
+/* score row */
 .score-wrap{display:flex;align-items:center;gap:12px}
 .score-ring{
-  width:72px;height:72px;border-radius:999px;
-  display:grid;place-items:center;
-  background:conic-gradient(var(--ring) 0deg, var(--ring) 360deg);
-  position:relative;
+  --deg: 0deg;
+  width:78px;height:78px;border-radius:999px; display:grid;place-items:center;
+  background:
+    conic-gradient(var(--ringTrack) 0deg, var(--ringTrack) 360deg);
+  position:relative; border:1px solid rgba(255,255,255,.10);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 8px 18px rgba(0,0,0,.35);
+  transition: background 380ms linear;
+}
+.score-ring::before{
+  content:""; position:absolute; inset:0; border-radius:inherit;
+  background:
+    conic-gradient(var(--ringColor, var(--primary)) var(--deg), var(--ringTrack) 0);
+  border-radius:inherit; mask: radial-gradient(circle 34px at 50% 50%, transparent 98%, #000 99%);
 }
 .score-ring::after{
-  content:""; position:absolute; inset:6px; border-radius:999px; background:var(--card);
+  content:""; position:absolute; inset:8px; border-radius:999px; background:var(--card);
 }
-#score-val{
-  position:relative; font-size:22px; font-weight:800; letter-spacing:.3px;
-}
+#score-val{ position:relative; font-size:22px; font-weight:800; letter-spacing:.3px }
 
+/* labels */
 .score-meta{display:flex;flex-direction:column;gap:4px}
 .score-label{font-size:12px;color:var(--muted)}
 .type-badge{
   display:inline-flex;align-items:center;gap:6px;
-  padding:3px 8px;border-radius:999px; font-weight:600; font-size:12px;
-  background:#111827;border:1px solid #1f2937;color:#cbd5e1;
+  padding:3px 8px;border-radius:999px; font-weight:700; font-size:12px;
+  background:#0b1220;border:1px solid rgba(255,255,255,.10); color:#cfe8f2;
 }
 
-.reason{margin-top:8px;color:#c8d2df}
-.details{margin-top:8px}
-.details summary{cursor:pointer;color:#9bd5ff}
-.details pre{white-space:pre-wrap;max-height:140px;overflow:auto;background:#0a1220;border:1px dashed #23324a;border-radius:8px;padding:8px;color:#cbd5e1}
+/* dynamic type hues (optional: add/remove in JS) */
+.type-badge.claim{ background:rgba(16,185,129,.15); color:#bbf7d0; border-color:rgba(16,185,129,.35) }
+.type-badge.image{ background:rgba(34,211,238,.14); color:#a5f3fc; border-color:rgba(34,211,238,.35) }
+.type-badge.unknown{ background:rgba(148,163,184,.14); color:#e2e8f0; border-color:rgba(148,163,184,.35) }
 
+.reason{margin-top:8px;color:#d8e6f3}
 .post-meta{margin-top:8px;color:var(--muted);font-size:12px}
 
+/* details + explanation */
+.details{margin-top:10px;border-top:1px dashed rgba(255,255,255,.12); padding-top:8px}
+.details summary{cursor:pointer;color:#b7f3ff;font-weight:700;list-style:none}
+.details summary::-webkit-details-marker{display:none}
+.exp-toolbar{display:flex;justify-content:flex-end;margin:6px 0 4px}
+.btn-ghost{
+  padding:4px 8px;border:1px solid rgba(255,255,255,.12);border-radius:8px;
+  background:rgba(255,255,255,.05); color:#d7f5ff; font-weight:600; font-size:12px;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.details pre{
+  white-space:pre-wrap;max-height:160px;overflow:auto;
+  background:#091426;border:1px dashed #22324c;border-radius:10px;padding:10px;color:#cbd5e1;
+  font:12px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+
+/* empty */
 .empty{
   text-align:center; color:#a7b1bf; background:rgba(255,255,255,0.02);
-  border:1px dashed #223152; border-radius:12px; padding:14px; margin-bottom:10px;
+  border:1px dashed rgba(255,255,255,.14); border-radius:12px; padding:14px; margin-bottom:10px;
 }
 
+/* button */
 .btn-primary{
   width:100%; padding:10px 12px; border:none; border-radius:10px;
-  background:linear-gradient(180deg,#1fbad6,#0ea5b1);
-  color:#03222a; font-weight:800; letter-spacing:.3px; cursor:pointer;
-  box-shadow:0 6px 20px rgba(34,211,238,.25);
+  background:linear-gradient(90deg,#06b6d4,#22d3ee);
+  color:#03222a; font-weight:900; letter-spacing:.3px; cursor:pointer;
+  box-shadow:0 8px 24px rgba(34,211,238,.28);
 }
-.btn-primary:hover{filter:saturate(1.1)}
+.btn-primary:hover{filter:saturate(1.05)}
 
+/* score colors (we only change the --ringColor; ring sweep animates) */
+.ring-green{ --ringColor: var(--green) }
+.ring-yellow{ --ringColor: var(--yellow) }
+.ring-red{ --ringColor: var(--red) }
+
+/* footer */
 .ftr{margin-top:10px;color:#7f8a99;font-size:11px}
-
-/* dynamic score ring colors */
-.ring-green{ background:conic-gradient(var(--green) var(--deg), var(--ring) 0) }
-.ring-yellow{ background:conic-gradient(var(--yellow) var(--deg), var(--ring) 0) }
-.ring-red{ background:conic-gradient(var(--red) var(--deg), var(--ring) 0) }

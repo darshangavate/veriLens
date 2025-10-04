@@ -1,17 +1,23 @@
-# === Backend (Python) ===
+# === Python / Backend ===
 venv/
+.env
+.env.local
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 *.sqlite3
 db.sqlite3
 *.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3-journal
+instance/
 
 # Django/Flask specific
-instance/
 *.db
-*.sqlite3-journal
+media/
+staticfiles/
 
 # === Frontend (React/Vite/Tailwind) ===
 factchecker-ui/node_modules/
@@ -29,20 +35,26 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# === Environment files ===
-.env
-.env.local
-.env.*.local
-
 # === Coverage / Testing ===
 coverage/
 **/coverage/
+.nyc_output/
+jest-results.json
 
 # === OS / Editor ===
 .DS_Store
 .vscode/
 .idea/
+*.swp
+*.bak
+Thumbs.db
 
 # === Optional ===
-*.bak
-*.swp
+*.iml
+*.pid
+*.seed
+*.tgz
+
+# === Logs ===
+logs/
+*.log
