@@ -933,7 +933,6 @@ export default function App() {
       <ProductPreview /> {/* NEW: section with Live Demo & Screenshots tabs */}
       <Trust />
       <Footer />
-      <MockupPanel/>
 
       {/* Keep the floating panel too (desktop users love this). Remove if you want only embedded */}
       <Contributors
@@ -942,6 +941,7 @@ export default function App() {
         owner="darshangavate"
         repo="veriLens"
       />
+      <MockupPanel></>
     </div>
   );
 }
