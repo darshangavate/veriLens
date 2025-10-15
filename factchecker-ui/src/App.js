@@ -941,7 +941,6 @@ export default function App() {
         owner="darshangavate"
         repo="veriLens"
       />
-      <MockupPanel></>
     </div>
   );
 }
