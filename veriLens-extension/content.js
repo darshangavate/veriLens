@@ -257,28 +257,57 @@ console.groupEnd();
   `);
 
     // ---------- send to backend ----------
-  try {
-    const resp = await fetch("http://localhost:8000/api/analyze/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+// ---------- send to backend ----------
+if (payload.force_ocr && payload.media?.length) {
+  const img = payload.media[0];
 
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
+  // 1) OCR the first image
+  chrome.runtime.sendMessage(
+    { type: "OCR_IMAGE_URL", imageUrl: img.url },
+    (ocrRes) => {
+      if (DEBUG) console.log("[veriLens] OCR result:", ocrRes);
 
-    if (DEBUG) {
-      console.log("[veriLens] backend response:", data);
+      const ocrText = (ocrRes?.text || "").trim();
+      if (ocrText) {
+        payload.caption_norm = ocrText;
+        payload.caption_len  = ocrText.length;
+      }
+
+      analyzeNow(payload, tip, img?.url);
     }
+  );
+} else {
+  analyzeNow(payload, tip);
+}
 
-    // Render backend result in the tooltip
-    const html = renderResult(data);
-    setTip(tip, html);
+function analyzeNow(payload, tip, fallbackImageUrl) {
+  const statement = (payload.caption_norm || "").trim();
 
-  } catch (err) {
-    console.error("[veriLens] backend error:", err);
-    setTip(tip, `<div class="vl-body">⚠️ Error: ${escapeHtml(err.message)}</div>`);
+  if (statement) {
+    // analyze caption text
+    chrome.runtime.sendMessage(
+      { type: "ANALYZE_TEXT", text: statement },
+      (data) => {
+        if (DEBUG) console.log("[veriLens] backend response:", data);
+        const html = renderResult(data);
+        setTip(tip, html);
+      }
+    );
+  } else if (fallbackImageUrl) {
+    // no text even after OCR → analyze image directly (prevents 400)
+    chrome.runtime.sendMessage(
+      { type: "ANALYZE_IMAGE_URL", imageUrl: fallbackImageUrl },
+      (data) => {
+        if (DEBUG) console.log("[veriLens] image analysis response:", data);
+        const html = renderResult(data);
+        setTip(tip, html);
+      }
+    );
+  } else {
+    setTip(tip, `<div class="vl-body">⚠️ No text or image to analyze.</div>`);
   }
+}
+
 
   // (We can re-enable backend calls later.)
   return;
@@ -338,50 +367,130 @@ s = s.replace(/^\s*[@#][\w._-]+\s*$/gim, "");
   return s.trim();
 }
 
-function extractIgCaption(root) {
-  // caption spans tend to be near header and have dir="auto"
-  const spans = Array.from(root.querySelectorAll(
-    [
-      "[data-testid='post-caption'] span[dir='auto']",
-      "ul li div div span[dir='auto']",
-      "header ~ div span[dir='auto']",
-      "article span[dir='auto']",
-      // extra: many layouts put caption here, right after username block
-      "header + div span[dir='auto']"
-    ].join(",")
-  )).filter(el =>
-    !el.closest(`[${VL_ATTR}]`) &&
-    !el.closest("button, a")
-  );
 
-  let best = "";
-  for (const el of spans) {
-    let t = stripIgUiNoise(el.innerText || "");
-    // ignore pure UI or hashtags-only lines
-    if (!t) continue;
-    if (/^[@#][\w._-]+$/.test(t)) continue;
-    if (/\b(likes?|view all \d+ comments?)\b/i.test(t)) continue;
+function findIgCaptionContainer(root) {
+  // 1) find the section that contains the Like icon
+  const likeSvg = root.querySelector('section svg[aria-label="Like"]');
+  if (!likeSvg) return null;
+  const section = likeSvg.closest('section');
+  if (!section) return null;
 
-    // accept short but meaningful captions (≥ 6 chars)
-    if (t.length >= 6 && t.length > best.length) best = t;
-
-    // stop early if we got a decent chunk
-    if (best.length >= 90) break;
+  // 2) from the section's parent, look ahead for any div that has a caption span
+  let node = section.parentElement;
+  while (node) {
+    const capSpan = node.querySelector('span._ap3a[dir="auto"]');
+    if (capSpan && !node.querySelector('svg[aria-label="Like"]')) {
+      // return the block that actually contains that caption span
+      return capSpan.closest('div');
+    }
+    node = node.nextElementSibling;
   }
-  return best;
+
+  return null;
 }
 
 
+
+//helper functions
+// --- helpers for cleaning ---
+const IG_CAPTION_SELECTORS = [
+  "[data-testid='post-caption'] span[dir='auto']",
+  "header + div span[dir='auto']",
+  "ul li div div span[dir='auto']",
+  "article span[dir='auto']",
+];
+
+function removeEmojis(str) {
+  // broad emoji/pictograph sweep incl. variation selectors & ZWJ
+  return str.replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, "");
+}
+
+function cleanCaptionPolicy(s) {
+  if (!s) return "";
+  let out = s;
+
+  // nuke Instagram chrome/labels you’re seeing
+  out = out
+    .replace(/\b(Verified|More Options|See translation|Suggested post|Sponsored|Close|Follow|Audio is muted|Add a comment…)\b/gi, "")
+    .replace(/\b(Like|Comment|Share|Save)\b/gi, "")                 // action words
+    .replace(/\bView all\s+\d+\s+comments?\b/gi, "")
+    .replace(/\b\d[\d,.\s]*\b(K|M|B)?\b/gi, "")                     // “53.7K”, “127”, etc.
+    .replace(/[•·]+/g, " ");                                        // bullet separators
+  // strip “… more / more” tails (incl NBSP)
+  out = out.replace(/\s*(?:…\s*more|\bsee more\b|\bshow more\b|\bmore\b)\s*$/i, "");
+
+  // drop emojis + hashtags
+  out = out.replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, "");
+  out = out.replace(/(^|\s)#[\p{L}\p{N}._-]+/gu, "");
+
+  // remove a leading username/handle if present
+  out = out.replace(/^\s*@?[\p{L}\p{N}._-]{2,}\s*(?:Verified)?\s*/u, "");
+
+  // collapse spaces
+  out = out.replace(/\s+/g, " ").trim();
+
+  // drop leftover pure counters
+  if (/^[\d.,KMB]+$/i.test(out)) return "";
+  // require letters or @mention
+  if (!/@[\w._-]+/.test(out) && !/[A-Za-z\u00C0-\u024F]/.test(out)) return "";
+
+  out = out.replace(/^[\s\S]*Verified\s*/i, "");
+
+  return out;
+}
+
+
+function getTextWithoutInteractive(el) {
+  const clone = el.cloneNode(true);
+  // keep visible text of links (so @mentions survive)
+  clone.querySelectorAll("a").forEach(a =>
+    a.replaceWith(document.createTextNode(a.textContent || ""))
+  );
+  // drop UI chrome
+  clone.querySelectorAll("button,[role='button'],svg,use").forEach(n => n.remove());
+  return clone.textContent || "";
+}
+
+
+
+
+// --- IG caption extractor (policy-aware) ---
+function extractIgCaption(root) {
+  const capRoot = findIgCaptionContainer(root);
+  if (!capRoot) return "";
+
+  // grab all caption-line spans in this block
+  const spans = Array.from(
+    capRoot.querySelectorAll('span._ap3a[dir="auto"]')
+  );
+  
+
+  // IG pattern in your dump:
+  // [0] username (inside <a>)  [1] caption text  [2] "… more" button wrapper
+  // So: pick the FIRST span._ap3a[dir="auto"] that is NOT inside <a>
+// ignore spans that are clearly UI fragments ("Like", "Comment", etc.)
+const goodSpans = spans.filter(s => !/^(Like|Comment|Share|Save|Options)$/i.test(s.textContent.trim()));
+const target = goodSpans.find(s => !s.closest('a'));
+
+
+  // read minus inline controls (“more” etc.), then clean per your policy
+  const raw = getTextWithoutInteractive(target);
+  return cleanCaptionPolicy(raw);
+}
+
+
+
 // ---------- text extraction (smart, ignores our UI) ----------
+// --- unified post text getter ---
 function getPostText(root) {
-  // If this looks like an IG post, try the IG-specific path first.
-  const looksIG = !!root.querySelector("a[href*='/p/'], a[href*='/reel/']");
+  const capRoot = findIgCaptionContainer(root);   // <— use this
+  const looksIG = !!capRoot;  
   if (looksIG) {
     const t = extractIgCaption(root);
-    if (t) return t;
+    return t; // IMPORTANT: do not fall back to whole card on IG
   }
 
-  // Fallback: generic cross-site extraction (your original approach).
+  // Non-IG fallback (unchanged, but uses your cleaners)
   const clone = root.cloneNode(true);
   clone.querySelectorAll(`[${VL_ATTR}],script,style,noscript`).forEach(n => n.remove());
 
@@ -401,8 +510,9 @@ function getPostText(root) {
   const seen = new Set();
   function pushText(t) {
     if (!t) return;
-    const s = normalizeText(stripIgUiNoise(t));
-    if (s.length < 20) return;
+    const s = cleanCaptionPolicy(t); // apply same policy
+    if (!s) return;
+    if (s.length < 60) return;
     if (isNoise(s)) return;
     if (seen.has(s)) return;
     seen.add(s);
@@ -413,6 +523,7 @@ function getPostText(root) {
 
   return best.trim();
 }
+
 
 
 function normalizeText(s) {
@@ -445,3 +556,47 @@ function hash(s) {
   }
   return (h >>> 0).toString(36);
 }
+
+function letterCount(s="") {
+  return (s.match(/[A-Za-z\u00C0-\u024F]/g) || []).length;
+}
+function shouldOCR(captionNorm, media) {
+  const letters = letterCount(captionNorm);
+  return (!captionNorm || letters < 60) && media && media.length > 0;
+}
+async function extractPostPayload(el) {
+  const expandedOk = await igExpandMore(el);
+
+  const caption = getPostText(el);
+  const { raw, norm, len } = normalizeCaption(caption);
+  const ids = getPostIds(el);
+  const media = getAllImages(el);
+
+  const forceOCR = shouldOCR(norm, media); // <— NEW
+
+  const hasVideo = !!el.querySelector("video");
+  const payload = {
+    capture_id: null,
+    platform: "instagram",
+    url: ids.url,
+    post_id: ids.post_id,
+    owner_id: ids.owner_id,
+    caption_raw: raw,
+    caption_norm: norm,
+    caption_len: len,
+    caption_complete: expandedOk,
+    caption_lang: null,
+    media,                         // images to OCR if needed
+    image_count: media.length,
+    has_video: hasVideo,
+    partial_capture: media.length === 0,
+    ts_captured: Date.now(),
+    // ------ NEW ------
+    ocr_hint: forceOCR ? "no_or_short_caption" : null,
+    force_ocr: forceOCR
+  };
+
+  payload.capture_id = buildCaptureId(payload);
+  return payload;
+}
+ 

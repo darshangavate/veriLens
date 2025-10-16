@@ -1,6 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Link, NavLink } from "react-router-dom";
-
+import RubricPanels from "./RubricPanels";
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Brain,
+  Search,
+  ShieldCheck,
+  UserCheck,
+  MessageSquare,
+} from "lucide-react";
 
 // ===== Links (edit these) =====
 const LINKS = {
@@ -321,6 +329,7 @@ function MockupPanel({ embedded = false }) {
     } finally {
       setLoading(false);
     }
+    
   };
 
   const panelClasses =
@@ -454,6 +463,15 @@ function MockupPanel({ embedded = false }) {
                       }
                     })()}
                   </pre>
+                  {!loading && result && (
+                    <div className="mt-3">
+                      <RubricPanels
+                        result={result}
+                        claim={statement}
+                        ready={result.type !== "claim" || Number.isFinite(result.score)}
+                      />
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -463,6 +481,12 @@ function MockupPanel({ embedded = false }) {
                   <p className="text-gray-300 text-sm leading-relaxed">
                     {result.reason}
                   </p>
+                  {result && (
+                    <div className="mt-3">
+                      <RubricPanels result={result} claim={statement} />
+                    </div>
+                  )}
+
                 </>
               )}
             </div>
@@ -592,9 +616,8 @@ function Hero() {
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
-                href={LINKS.chrome || "#install"}           // falls back to #install if not published yet
-                target={LINKS.chrome ? "_blank" : undefined}
-                rel={LINKS.chrome ? "noreferrer" : undefined}
+                href={`${process.env.PUBLIC_URL}/veriLens-V.2.0.zip`}
+                download="VeriLens-Extension.zip"          // falls back to #install if not published yet
                 className="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold shadow-lg shadow-cyan-500/20"
                 aria-label="Add VeriLens to Chrome"
               >
@@ -752,29 +775,67 @@ function ProductPreview() {
   );
 }
 
+
+
 function HowItWorks() {
   const steps = [
-    { n: 1, t: "Highlight a claim", d: "Select text or drop an image with text." },
-    { n: 2, t: "Analyze", d: "VeriLens checks credibility using text + vision." },
-    { n: 3, t: "Decide faster", d: "Get a score and explanation in seconds." },
+    { n: 1, t: "Extract", d: "VeriLens parses text or image (OCR) and cleans it for analysis.", icon: FileText },
+    { n: 2, t: "Understand", d: "It interprets the claim’s entities, tone, and context.", icon: Brain },
+    { n: 3, t: "Retrieve Evidence", d: "Relevant sources and facts are pulled from trusted datasets.", icon: Search },
+    { n: 4, t: "Verify & Score", d: "Each claim is cross-checked and scored for reliability.", icon: ShieldCheck },
+    { n: 5, t: "Source & Author Credibility", d: "Weighs the trustworthiness of the author or publisher.", icon: UserCheck },
+    { n: 6, t: "Explain", d: "Combines everything into a clear, transparent verdict.", icon: MessageSquare },
   ];
+
   return (
-    <section className="py-20 bg-black" id="how">
+    <section className="py-20 bg-black border-t border-gray-800 relative overflow-hidden" id="how">
       <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">How it works</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {steps.map((s) => (
-            <div key={s.n} className="rounded-2xl border border-gray-800 bg-gray-900/70 p-6">
-              <div className="text-cyan-300 text-sm font-semibold">Step {s.n}</div>
-              <div className="mt-2 text-white font-semibold">{s.t}</div>
-              <p className="text-gray-400 text-sm mt-2">{s.d}</p>
-            </div>
-          ))}
+        <h2 className="text-2xl md:text-3xl font-bold text-white mb-10 text-center">
+          How VeriLens Works
+        </h2>
+        <p className="text-center text-gray-400 text-sm mb-10">
+          From claim to clarity — every step ensures transparency and trust.
+        </p>
+
+        <div className="relative flex flex-col md:flex-row items-center justify-between md:space-x-6 space-y-6 md:space-y-0">
+          {steps.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <motion.div
+                key={s.n}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="flex flex-col items-center text-center relative group"
+              >
+                {/* Connecting line (desktop) */}
+                {i < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-8 left-[60%] w-full h-[2px] bg-gradient-to-r from-cyan-500/30 to-transparent" />
+                )}
+
+                <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.2)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all">
+                  <Icon className="w-8 h-8 text-cyan-400" />
+                </div>
+
+                <div className="mt-3 text-cyan-300 text-sm font-semibold">
+                  Step {s.n}
+                </div>
+                <div className="text-white font-semibold mt-1">{s.t}</div>
+                <p className="text-gray-400 text-sm mt-2 max-w-[220px]">
+                  {s.d}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
+
+      {/* subtle background gradient */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-cyan-950/20 via-black to-black pointer-events-none" />
     </section>
   );
 }
+
 
 function Trust() {
   return (
